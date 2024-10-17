@@ -1,0 +1,11 @@
+# Enrollment: POST
+POST https://localhost:7066/api/Enrollment
+accept: text/plain
+Content-Type: application/json
+
+{
+  "student_id": 4,
+  "course_id": 10
+}
+
+###
