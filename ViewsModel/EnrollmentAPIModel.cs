@@ -1,12 +1,12 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WebApplication7.ViewsModel;
 
 public class EnrollmentAPIModel
 {
-    [Column("student_id")]
+    [JsonPropertyName("student_id")]
     public int StudentId { get; set; }
 
-    [Column("course_id")]
+    [JsonPropertyName("course_id")]
     public int CourseId { get; set; }
 }
