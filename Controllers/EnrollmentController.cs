@@ -83,18 +83,29 @@ namespace WebApplication7.Controllers
         [HttpPost]
         public async Task<ActionResult<Enrollment>> PostEnrollment(EnrollmentAPIModel enrollment)
         {
-            // check existing student and course
-            bool isStudentExist = await _context.Students.AnyAsync(s => s.Id == enrollment.StudentId);
-            if (!isStudentExist)
+            // // check existing student and course
+            var studentInfo = await _context.Students.FirstOrDefaultAsync(s => s.Id == enrollment.StudentId);
+            if (studentInfo == null)
             {
                 return BadRequest("Student not found");
             }
 
-            bool isCourseExist = await _context.Courses.AnyAsync(c => c.Id == enrollment.CourseId);
-            if (!isCourseExist)
+            var courseInfo = await _context.Courses.FirstOrDefaultAsync(c => c.Id == enrollment.CourseId);
+            if (courseInfo == null)
             {
                 return BadRequest("Course not found");
             }
+            // bool isStudentExist = await _context.Students.AnyAsync(s => s.Id == enrollment.StudentId);
+            // if (!isStudentExist)
+            // {
+            //     return BadRequest("Student not found");
+            // }
+            //
+            // bool isCourseExist = await _context.Courses.AnyAsync(c => c.Id == enrollment.CourseId);
+            // if (!isCourseExist)
+            // {
+            //     return BadRequest("Course not found");
+            // }
 
             // check if student already enrolled in the course
             bool iEnrolled = await _context.Enrollments.AnyAsync(e =>
@@ -107,16 +118,15 @@ namespace WebApplication7.Controllers
             // create new enrollment
             var newEnroll = new Enrollment()
             {
-                StudentId = enrollment.StudentId,
-                CourseId = enrollment.CourseId,
+                Student = studentInfo,
+                Course = courseInfo,
                 EnrollmentDate = DateOnly.FromDateTime(DateTime.Now)
             };
             _context.Enrollments.Add(newEnroll);
             await _context.SaveChangesAsync();
 
-            await _context.Entry(newEnroll).Reference(e => e.Student).LoadAsync();
-            await _context.Entry(newEnroll).Reference(e => e.Course).LoadAsync();
-            return CreatedAtAction("GetEnrollment", new { id = newEnroll.Id }, newEnroll);
+            // return CreatedAtAction("GetEnrollment", new { id = newEnroll.Id }, newEnroll);
+            return Created(string.Empty, newEnroll);
         }
 
         // DELETE: api/Enrollment/5
