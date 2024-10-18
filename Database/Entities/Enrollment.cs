@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 namespace WebApplication7.Database.Entities;
 
 [Table("enrollment")]
-[Index("CourseId", Name = "enrollment_course_id_fk")]
-[Index("StudentId", Name = "enrollment_student_id_fk")]
 public class Enrollment
 {
     [Key]
@@ -22,11 +20,9 @@ public class Enrollment
     [Column("enrollment_date")]
     public DateOnly EnrollmentDate { get; set; }
 
-    [ForeignKey("CourseId")]
-    [InverseProperty("Enrollments")]
+    [ForeignKey("CourseId")] // determine the specific foreign key column and name, ignore to use the default
     public virtual Course Course { get; set; } = null!;
 
-    [ForeignKey("StudentId")]
-    [InverseProperty("Enrollments")]
+    [ForeignKey("StudentId")] // determine the specific foreign key column and name, ignore to use the default
     public virtual Student Student { get; set; } = null!;
 }

@@ -11,18 +11,15 @@ using WebApplication7.Database;
 namespace WebApplication7.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241017030944_Initial")]
+    [Migration("20241018071848_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseCollation("utf8mb4_0900_ai_ci")
-                .HasAnnotation("ProductVersion", "6.0.21")
+                .HasAnnotation("ProductVersion", "6.0.35")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            MySqlModelBuilderExtensions.HasCharSet(modelBuilder, "utf8mb4");
 
             modelBuilder.Entity("WebApplication7.Database.Entities.Course", b =>
                 {
@@ -48,12 +45,13 @@ namespace WebApplication7.Migrations
 
                     b.Property<int>("SchoolId")
                         .HasColumnType("int")
-                        .HasColumnName("schoolId");
+                        .HasColumnName("school_id");
 
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
+                    b.HasKey("Id");
 
-                    b.HasIndex(new[] { "SchoolId" }, "course_school_id_fk");
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex(new[] { "Name" }, "course_name_uindex");
 
                     b.ToTable("course");
                 });
@@ -77,12 +75,11 @@ namespace WebApplication7.Migrations
                         .HasColumnType("int")
                         .HasColumnName("student_id");
 
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
+                    b.HasKey("Id");
 
-                    b.HasIndex(new[] { "CourseId" }, "enrollment_course_id_fk");
+                    b.HasIndex("CourseId");
 
-                    b.HasIndex(new[] { "StudentId" }, "enrollment_student_id_fk");
+                    b.HasIndex("StudentId");
 
                     b.ToTable("enrollment");
                 });
@@ -103,20 +100,21 @@ namespace WebApplication7.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
-                        .HasColumnName("name")
-                        .UseCollation("utf8mb3_general_ci");
-
-                    MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("Name"), "utf8mb3");
+                        .HasColumnName("name");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("char(15)")
-                        .HasColumnName("phone_number")
-                        .IsFixedLength();
+                        .HasColumnName("phone_number");
 
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Name" }, "school_name_uindex")
+                        .IsUnique();
 
                     b.ToTable("school");
                 });
@@ -136,28 +134,25 @@ namespace WebApplication7.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("first_name")
-                        .UseCollation("utf8mb3_general_ci");
-
-                    MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("FirstName"), "utf8mb3");
+                        .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("last_name")
-                        .UseCollation("utf8mb3_general_ci");
-
-                    MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("LastName"), "utf8mb3");
+                        .HasColumnName("last_name");
 
                     b.Property<int>("SchoolId")
                         .HasColumnType("int")
                         .HasColumnName("school_id");
 
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
+                    b.HasKey("Id");
 
-                    b.HasIndex(new[] { "SchoolId" }, "student_school_id_fk");
+                    b.HasIndex("DateOfBirth");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex(new[] { "LastName", "FirstName" }, "student_name_index");
 
                     b.ToTable("student");
                 });
@@ -168,8 +163,7 @@ namespace WebApplication7.Migrations
                         .WithMany("Courses")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("course_school_id_fk");
+                        .IsRequired();
 
                     b.Navigation("School");
                 });
@@ -180,14 +174,13 @@ namespace WebApplication7.Migrations
                         .WithMany("Enrollments")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("enrollment_course_id_fk");
+                        .IsRequired();
 
                     b.HasOne("WebApplication7.Database.Entities.Student", "Student")
                         .WithMany("Enrollments")
                         .HasForeignKey("StudentId")
-                        .IsRequired()
-                        .HasConstraintName("enrollment_student_id_fk");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
 
@@ -200,8 +193,7 @@ namespace WebApplication7.Migrations
                         .WithMany("Students")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("student_school_id_fk");
+                        .IsRequired();
 
                     b.Navigation("School");
                 });

@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 namespace WebApplication7.Database.Entities;
 
 [Table("school")]
+[Index("PhoneNumber", IsUnique = true)]
+[Index("Name", Name = "school_name_uindex", IsUnique = true)]
 public class School
 {
     [Key]
@@ -13,11 +15,9 @@ public class School
 
     [Column("name")]
     [StringLength(50)]
-    [MySqlCharSet("utf8mb3")]
-    [MySqlCollation("utf8mb3_general_ci")]
     public string Name { get; set; } = null!;
 
-    [Column("phone_number")]
+    [Column("phone_number", TypeName = "char(15)")]
     [StringLength(15)]
     public string PhoneNumber { get; set; } = null!;
 
@@ -25,9 +25,7 @@ public class School
     [StringLength(255)]
     public string? Address { get; set; }
 
-    [InverseProperty("School")]
     public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 
-    [InverseProperty("School")]
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 }

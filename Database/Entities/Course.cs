@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebApplication7.Database.Entities;
 
 [Table("course")]
-[Index("SchoolId", Name = "course_school_id_fk")]
+[Index("Name", Name = "course_name_uindex", IsUnique = false)]
 public class Course
 {
     [Key] [Column("id")] public int Id { get; set; }
@@ -20,12 +20,10 @@ public class Course
 
     [Column("credits")] public int Credits { get; set; }
 
-    [Column("schoolId")] public int SchoolId { get; set; }
+    [Column("school_id")] public int SchoolId { get; set; }
 
-    [InverseProperty("Course")]
     public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 
-    [ForeignKey("SchoolId")]
-    [InverseProperty("Courses")]
+    [ForeignKey("SchoolId")] // determine the specific foreign key column and name, ignore to use the default
     public virtual School School { get; set; } = null!;
 }

@@ -19,19 +19,18 @@ namespace WebApplication7.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false, collation: "utf8mb3_general_ci")
-                        .Annotation("MySql:CharSet", "utf8mb3"),
-                    phone_number = table.Column<string>(type: "char(15)", fixedLength: true, maxLength: 15, nullable: false, collation: "utf8mb4_0900_ai_ci")
+                    name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    address = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true, collation: "utf8mb4_0900_ai_ci")
+                    phone_number = table.Column<string>(type: "char(15)", maxLength: 15, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    address = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PRIMARY", x => x.id);
+                    table.PrimaryKey("PK_school", x => x.id);
                 })
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "course",
@@ -39,25 +38,24 @@ namespace WebApplication7.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false, collation: "utf8mb4_0900_ai_ci")
+                    name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    description = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true, collation: "utf8mb4_0900_ai_ci")
+                    description = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     credits = table.Column<int>(type: "int", nullable: false),
-                    schoolId = table.Column<int>(type: "int", nullable: false)
+                    school_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PRIMARY", x => x.id);
+                    table.PrimaryKey("PK_course", x => x.id);
                     table.ForeignKey(
-                        name: "course_school_id_fk",
-                        column: x => x.schoolId,
+                        name: "FK_course_school_school_id",
+                        column: x => x.school_id,
                         principalTable: "school",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "student",
@@ -65,25 +63,24 @@ namespace WebApplication7.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    first_name = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false, collation: "utf8mb3_general_ci")
-                        .Annotation("MySql:CharSet", "utf8mb3"),
-                    last_name = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false, collation: "utf8mb3_general_ci")
-                        .Annotation("MySql:CharSet", "utf8mb3"),
+                    first_name = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    last_name = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     date_of_birth = table.Column<DateOnly>(type: "date", nullable: false),
                     school_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PRIMARY", x => x.id);
+                    table.PrimaryKey("PK_student", x => x.id);
                     table.ForeignKey(
-                        name: "student_school_id_fk",
+                        name: "FK_student_school_school_id",
                         column: x => x.school_id,
                         principalTable: "school",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "enrollment",
@@ -97,41 +94,68 @@ namespace WebApplication7.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PRIMARY", x => x.id);
+                    table.PrimaryKey("PK_enrollment", x => x.id);
                     table.ForeignKey(
-                        name: "enrollment_course_id_fk",
+                        name: "FK_enrollment_course_course_id",
                         column: x => x.course_id,
                         principalTable: "course",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "enrollment_student_id_fk",
+                        name: "FK_enrollment_student_student_id",
                         column: x => x.student_id,
                         principalTable: "student",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "course_school_id_fk",
+                name: "course_name_uindex",
                 table: "course",
-                column: "schoolId");
+                column: "name");
 
             migrationBuilder.CreateIndex(
-                name: "enrollment_course_id_fk",
+                name: "IX_course_school_id",
+                table: "course",
+                column: "school_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_enrollment_course_id",
                 table: "enrollment",
                 column: "course_id");
 
             migrationBuilder.CreateIndex(
-                name: "enrollment_student_id_fk",
+                name: "IX_enrollment_student_id",
                 table: "enrollment",
                 column: "student_id");
 
             migrationBuilder.CreateIndex(
-                name: "student_school_id_fk",
+                name: "IX_school_phone_number",
+                table: "school",
+                column: "phone_number",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "school_name_uindex",
+                table: "school",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_student_date_of_birth",
+                table: "student",
+                column: "date_of_birth");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_student_school_id",
                 table: "student",
                 column: "school_id");
+
+            migrationBuilder.CreateIndex(
+                name: "student_name_index",
+                table: "student",
+                columns: new[] { "last_name", "first_name" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
